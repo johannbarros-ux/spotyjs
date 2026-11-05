@@ -61,7 +61,7 @@ public class Main {
         adicionarFaixaSeExistir("Lover Girl", "Laufey", "src/musicas/Lover Girl - Laufey.mp3", 210);
     }
     private static void adicionarFaixaSeExistir(String titulo, String artista, String caminho, int duracao) {
-        boolean existe = catalogo.stream().anyMatch(m -> m.getCaminhoArquivo() != null && m.getCaminhoArquivo().equals(caminho));
+        boolean existe = catalogo.stream().anyMatch(m -> caminho.equals(m.getCaminhoArquivo()));
         if (!existe && Files.isRegularFile(Path.of(caminho)))
             catalogo.add(new Musica(proximoIdMusica++, titulo, duracao, "mp3", caminho, artista));
     }
@@ -167,7 +167,9 @@ public class Main {
         int id = lerInteiro("ID da musica: ");
         Musica musica = buscarMusica(id);
         if (musica == null) { System.out.println("Musica nao encontrada."); return; }
-        fila.adicionar(musica); player.reproduzir(musica);
+        fila.limpar();
+        fila.adicionar(musica);
+        player.reproduzir(musica);
     }
     private static void controlarPlayer() {
         System.out.println("1 Pausar | 2 Retomar | 3 Parar | 4 Proxima | 5 Anterior");
@@ -188,12 +190,12 @@ public class Main {
         Musica m = buscarMusica(lerInteiro("ID da musica: "));
         if (m == null) { System.out.println("Musica nao encontrada."); return; }
         if (op == 1) ouvinte.curtir(m); else if (op == 3) ouvinte.descurtir(m);
+        else System.out.println("Opcao invalida.");
         salvarDados();
     }
     private static void criarPlaylist(Ouvinte ouvinte) {
         Playlist p = ouvinte.criarPlaylist(lerTexto("Nome da playlist: "));
-        boolean adicionando = true;
-        while (adicionando) {
+        while (true) {
             listarCatalogo();
             int id = lerInteiro("ID da musica (0 para terminar): ");
             if (id == 0) break;

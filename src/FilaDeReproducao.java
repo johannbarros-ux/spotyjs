@@ -11,6 +11,7 @@ public class FilaDeReproducao {
             if (posicaoAtual == -1) posicaoAtual = 0;
         }
     }
+    public void limpar() { musicas.clear(); posicaoAtual = -1; }
     public void avancar() {
         if (posicaoAtual < musicas.size() - 1) posicaoAtual++;
     }
