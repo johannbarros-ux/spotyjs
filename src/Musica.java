@@ -1,54 +1,48 @@
-public class Musica implements Reproduzivel {
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class Musica {
     private final int id;
     private final String titulo;
     private final int duracaoSegundos;
     private final String formato;
-    private boolean reproduzindo;
+    private String caminhoArquivo;
+    private String artista;
 
     public Musica(int id, String titulo, int duracaoSegundos, String formato) {
-        if (duracaoSegundos <= 0) {
-            throw new IllegalArgumentException("A duracao deve ser positiva");
-        }
+        this(id, titulo, duracaoSegundos, formato, null, "Artista independente");
+    }
+
+    public Musica(int id, String titulo, int duracaoSegundos, String formato, String caminhoArquivo, String artista) {
+        if (id <= 0) throw new IllegalArgumentException("ID da musica invalido.");
+        if (titulo == null || titulo.isBlank()) throw new IllegalArgumentException("Titulo obrigatorio.");
+        if (duracaoSegundos <= 0) throw new IllegalArgumentException("A duracao deve ser positiva.");
         this.id = id;
-        this.titulo = titulo;
+        this.titulo = titulo.trim();
         this.duracaoSegundos = duracaoSegundos;
-        this.formato = formato;
+        this.formato = formato == null ? "" : formato.trim().toLowerCase();
+        this.caminhoArquivo = caminhoArquivo;
+        this.artista = artista == null || artista.isBlank() ? "Artista independente" : artista.trim();
     }
 
-    public int obterDuracao() {
-        return duracaoSegundos;
-    }
-
+    public int obterDuracao() { return duracaoSegundos; }
     public boolean validarFormato() {
-        return formato != null
-                && (formato.equalsIgnoreCase("mp3")
-                || formato.equalsIgnoreCase("wav")
-                || formato.equalsIgnoreCase("ogg"));
+        return formato.equals("mp3") || formato.equals("wav") || formato.equals("ogg");
     }
-
-    @Override
-    public void reproduzir() {
-        reproduzindo = true;
+    public boolean possuiArquivo() {
+        return caminhoArquivo != null && Files.isRegularFile(Path.of(caminhoArquivo));
     }
-
-    @Override
-    public void pausar() {
-        reproduzindo = false;
+    public int getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public String getFormato() { return formato; }
+    public String getCaminhoArquivo() { return caminhoArquivo; }
+    public void setCaminhoArquivo(String caminhoArquivo) { this.caminhoArquivo = caminhoArquivo; }
+    public String getArtista() { return artista; }
+    public void setArtista(String artista) {
+        if (artista == null || artista.isBlank()) throw new IllegalArgumentException("Informe o artista.");
+        this.artista = artista.trim();
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public String getFormato() {
-        return formato;
-    }
-
-    public boolean isReproduzindo() {
-        return reproduzindo;
+    @Override public String toString() {
+        return id + " - " + titulo + " | " + artista + " | " + duracaoSegundos + "s";
     }
 }
